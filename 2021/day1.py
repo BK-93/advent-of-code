@@ -1,19 +1,29 @@
-import csv
+import pathlib
+from itertools import pairwise
+from typing import Iterator
 
-increaseCount = 0
-currentNumber = 0
-lastNumber = 0
 
-with open('inputDay1.csv', 'r') as csvfile:
-    datareader = csv.reader(csvfile)
-    for row in datareader:
-        lastNumber = currentNumber
-        print("Lastnumber: " + str(lastNumber))
-        currentNumber = int(row[0])
-        print("Currentnumber: " + str(currentNumber))
-        print("------------------")
+def part1() -> int:
+    return increase_count(get_numbers_list())
 
-        if currentNumber > lastNumber:
-            increaseCount += 1
 
-print(increaseCount - 1)
+def part2() -> int:
+    return increase_count(sum_of_three())
+
+
+def increase_count(numbers: Iterator[int]) -> int:
+    count_increase = (b > a for a, b in pairwise(numbers))
+    return sum(count_increase)
+
+
+def sum_of_three() -> Iterator[int]:
+    numbers_list = list(get_numbers_list())
+    return (sum(numbers_list[i - 2:i + 1]) for i in range(2, len(numbers_list)))
+
+
+def get_numbers_list() -> Iterator[int]:
+    lines = pathlib.Path('input_day1.txt').read_text().rstrip().split('\n')
+    return (int(line) for line in lines)
+
+
+print(part2())
